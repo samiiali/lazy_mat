@@ -56,6 +56,8 @@ public:
     template <typename lhs_t, typename rhs_t>
     mat_t& operator= (const mat_op_t<lhs_t, rhs_t>& op);
 
+    void assign (const double val);
+
     friend std::ostream& operator<< (std::ostream& os, const mat_t& mat);
 
     double& operator() (size_t i, size_t j);
@@ -76,6 +78,14 @@ double mat_op_t<lhs_t, rhs_t>::operator() (size_t i, size_t j) const
     switch (_op) {
         case mat_op_name::add: {
             out = _lhs(i, j) + _rhs(i, j);
+            break;
+        }
+    }
+    switch (_op) {
+        case mat_op_name::mult: {
+            assert(_lhs._ncol == _rhs._nrow);
+            for (size_t k = 0; k < _lhs._ncol; ++k)
+                out += _lhs(i, k) * _rhs(k, j);
             break;
         }
     }
@@ -109,6 +119,7 @@ mat_t::mat_t (const mat_op_t<lhs_t, rhs_t>& op)
 template <typename lhs_t, typename rhs_t>
 mat_t& mat_t::operator= (const mat_op_t<lhs_t, rhs_t>& op)
 {
+    assert(this->_nrow == op._nrow && this->_ncol == op._ncol);
     for (size_t i = 0; i < _nrow; ++i)
         for (size_t j = 0; j < _ncol; ++j)
             operator()(i, j) = op(i,j);
@@ -147,6 +158,11 @@ mat_op_t<mat_op_t<llhs_t, lrhs_t>, mat_op_t<rlhs_t, rrhs_t>> operator+ (
 // ----------------------------------------------------------------------------
 
 mat_op_t<mat_t, mat_t> operator+ (const mat_t& l_mat, const mat_t& r_mat);
+
+// ----------------------------------------------------------------------------
+
+mat_op_t<mat_t, mat_t> operator* (const mat_t& l_mat, const mat_t& r_mat);
+
 
 
 } // namespace linalg

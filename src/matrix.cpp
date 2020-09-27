@@ -22,6 +22,13 @@ double& mat_t::operator() (size_t i, size_t j)
 
 // ----------------------------------------------------------------------------
 
+void mat_t::assign (const double val)
+{
+    _data.assign(_data.size(), val);
+}
+
+// ----------------------------------------------------------------------------
+
 double mat_t::operator() (size_t i, size_t j) const
 {
     if (_fmt == mat_fmt::row_major)
@@ -53,5 +60,11 @@ std::ostream& operator<< (std::ostream& os, const mat_t& mat)
 }
 
 // ----------------------------------------------------------------------------
+
+mat_op_t<mat_t, mat_t> operator* (const mat_t& l_mat, const mat_t& r_mat)
+{
+    return mat_op_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::mult);
+}
+
 
 } // namespace linalg

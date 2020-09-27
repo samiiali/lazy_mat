@@ -58,3 +58,14 @@ TEST (test_suite, diag_test)
     mat6 = (mat3 + mat4) + mat2;
     EXPECT_EQ(mat6(0,0), 9.0);
 }
+
+TEST (test_suite, mult_test)
+{
+    linalg::mat_t mat1(3,2);
+    linalg::mat_t mat2(2,3);
+    mat1.assign(0.0);
+    mat2.assign(0.0);
+    mat1(0,0) = mat1(0,1) = mat2(0,0) = mat2(1,0) = 1.0;
+    linalg::mat_t mat3 = mat1 * mat2;
+    EXPECT_EQ(mat3(0,0), 2.0);
+}

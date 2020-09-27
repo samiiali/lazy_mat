@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(lazy_eval LANGUAGES CXX)
+project(lazy_mat LANGUAGES CXX)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake/modules")
 set(CMAKE_CXX_STANDARD 11)
@@ -19,7 +19,7 @@ message ("++ Git commit hash: ${GIT_COMMIT_HASH}")
 include_directories(src)
 
 add_compile_options("-Wshadow;-Werror")
-add_executable(lazy_eval)
+add_executable(lazy_mat)
 add_executable(tests)
 
 add_subdirectory(src)
