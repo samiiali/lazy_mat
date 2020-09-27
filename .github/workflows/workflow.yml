@@ -1,0 +1,25 @@
+name: build
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build_test:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: gtest_build
+      run: mkdir -p ~/Programs && cd ~/Programs && git clone https://github.com/google/googletest.git && cd googletest && mkdir build && cd build && cmake -DCMAKE_INSTALL_PREFIX="../install" .. && make install
+    - name: install dependency
+      run: sudo apt-get install -y lcov gcovr
+    - name: configure
+      run: mkdir build && cd build && cmake -DCMAKE_BUILD_TYPE=Debug ..
+    - name: build
+      run: cmake --build build
+    - name: ctest
+      run: cd build && ctest -V
