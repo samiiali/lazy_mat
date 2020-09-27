@@ -1,5 +1,5 @@
 [![Actions Status](https://github.com/samiiali/lazy_mat/workflows/build/badge.svg)](https://github.com/samiiali/lazy_mat/actions)
-[![codecov](https://codecov.io/gh/samiiali/lazy_eval/branch/master/graph/badge.svg?token=G0M5IESDLU)](https://codecov.io/gh/samiiali/lazy_eval)
+[![codecov](https://codecov.io/gh/samiiali/lazy_mat/branch/master/graph/badge.svg?token=G0M5IESDLU)](https://codecov.io/gh/samiiali/lazy_mat)
 
 # What is lazy_mat?
 
