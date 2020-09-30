@@ -17,6 +17,16 @@ TEST (test_suite, init_row_major)
     ASSERT_EQ(mat1._data[1], 1.0);
 }
 
+TEST (test_suite, assign_failure)
+{
+    EXPECT_DEATH({
+            linalg::mat_t mat1(2,2);
+            mat1(0,1) = 1.0;
+            linalg::mat_t mat2(2,3);
+            mat2 = mat1;
+        }, ".*");
+}
+
 TEST (test_suite, init_col_major)
 {
     linalg::mat_t mat1(2,2, linalg::mat_fmt::col_major);
@@ -67,5 +77,22 @@ TEST (test_suite, mult_test)
     mat2.assign(0.0);
     mat1(0,0) = mat1(0,1) = mat2(0,0) = mat2(1,0) = 1.0;
     linalg::mat_t mat3 = mat1 * mat2;
+    EXPECT_DEATH({
+            linalg::mat_t mat4(2,2);
+            mat4 = mat1 * mat2;
+        }, ".*");
     EXPECT_EQ(mat3(0,0), 2.0);
+}
+
+TEST (test_suite, sub_test)
+{
+    linalg::mat_t mat1(3,2);
+    linalg::mat_t mat2(3,2);
+    mat1.assign(0.0);
+    mat2.assign(0.0);
+    mat1(0,0) = mat1(0,1) = 1.0;
+    mat2(1,0) = mat1(1,1) = 1.0;
+    linalg::mat_t mat3 = mat1 - mat2;
+    EXPECT_EQ(mat3(0,0), 1.0);
+    EXPECT_EQ(mat3(1,0), -1.0);
 }

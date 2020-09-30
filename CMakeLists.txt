@@ -31,7 +31,6 @@ target_link_libraries(tests GTest::GTest GTest::Main)
 
 include(CTest)
 gtest_discover_tests(tests)
-#add_test(NAME tests COMMAND tests)
 
 include(CodeCoverage)
 append_coverage_compiler_flags()
@@ -40,17 +39,20 @@ setup_target_for_coverage_gcovr_xml(
     NAME xmlcov
     EXECUTABLE tests
     DEPENDENCIES tests
+    BASE_DIRECTORY "../"
     EXCLUDE "/usr/*;${GTEST_ROOT}/*;src/main.cpp;test/tests.cpp"
 )
 setup_target_for_coverage_gcovr_html(
     NAME htmlcov
     EXECUTABLE tests
     DEPENDENCIES tests
+    BASE_DIRECTORY "../"
     EXCLUDE "/usr/*;${GTEST_ROOT}/*;src/main.cpp;test/tests.cpp"
 )
 setup_target_for_coverage_lcov(
     NAME cov
     EXECUTABLE tests
     DEPENDENCIES tests
+    BASE_DIRECTORY "../"
     EXCLUDE "/usr/*;${GTEST_ROOT}/*;src/main.cpp;test/tests.cpp"
 )

@@ -1,9 +1,10 @@
 #include <cstdio>
 #include <iostream>
 #include <vector>
+#include <cassert>
 
-#ifndef MATRIX_H
-#define MATRIX_H
+#ifndef MATRIX_HPP
+#define MATRIX_HPP
 
 namespace linalg
 {
@@ -38,8 +39,8 @@ public:
 
     const lhs_t& _lhs;
     const rhs_t& _rhs;
-    const size_t _nrow;
-    const size_t _ncol;
+    size_t _nrow; // non-const to be init'ed inside ctor
+    size_t _ncol; // non-const to be init'ed inside ctor
     const mat_op_name _op;
 };
 
@@ -49,6 +50,8 @@ class mat_t
 {
 public:
     mat_t (size_t nrow, size_t ncol, mat_fmt fmt = mat_fmt::row_major);
+
+    mat_t& operator= (const mat_t& rhs);
 
     template <typename lhs_t, typename rhs_t>
     mat_t (const mat_op_t<lhs_t, rhs_t>& op);
@@ -80,8 +83,10 @@ double mat_op_t<lhs_t, rhs_t>::operator() (size_t i, size_t j) const
             out = _lhs(i, j) + _rhs(i, j);
             break;
         }
-    }
-    switch (_op) {
+        case mat_op_name::sub: {
+            out = _lhs(i, j) - _rhs(i, j);
+            break;
+        }
         case mat_op_name::mult: {
             assert(_lhs._ncol == _rhs._nrow);
             for (size_t k = 0; k < _lhs._ncol; ++k)
@@ -97,8 +102,28 @@ double mat_op_t<lhs_t, rhs_t>::operator() (size_t i, size_t j) const
 template <typename lhs_t, typename rhs_t>
 mat_op_t<lhs_t, rhs_t>::mat_op_t (
     const lhs_t& lhs, const rhs_t& rhs, mat_op_name op)
-  : _lhs(lhs), _rhs(rhs), _nrow(lhs._nrow), _ncol(lhs._ncol), _op(op)
+  : _lhs(lhs), _rhs(rhs), _op(op)
 {
+    switch (_op) {
+        case mat_op_name::add: {
+            assert(lhs._nrow == rhs._nrow && lhs._ncol == rhs._ncol);
+            _nrow = lhs._nrow;
+            _ncol = lhs._ncol;
+            break;
+        }
+        case mat_op_name::sub: {
+            assert(lhs._nrow == rhs._nrow && lhs._ncol == rhs._ncol);
+            _nrow = lhs._nrow;
+            _ncol = lhs._ncol;
+            break;
+        }
+        case mat_op_name::mult: {
+            assert(lhs._ncol == rhs._nrow);
+            _nrow = lhs._nrow;
+            _ncol = rhs._ncol;
+            break;
+        }
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -126,45 +151,11 @@ mat_t& mat_t::operator= (const mat_op_t<lhs_t, rhs_t>& op)
     return *this;
 }
 
-// ----------------------------------------------------------------------------
 
-template <typename lhs_t, typename rhs_t>
-mat_op_t<mat_op_t<lhs_t, rhs_t>, mat_t> operator+ (
-    const mat_op_t<lhs_t, rhs_t>& lhs, const mat_t& mat)
-{
-    return mat_op_t<mat_op_t<lhs_t, rhs_t>, mat_t>(lhs, mat, mat_op_name::add);
-}
-
-// ----------------------------------------------------------------------------
-
-template <typename lhs_t, typename rhs_t>
-mat_op_t<mat_t, mat_op_t<lhs_t, rhs_t>> operator+ (
-    const mat_t& mat, const mat_op_t<lhs_t, rhs_t>& rhs)
-{
-    return mat_op_t<mat_t, mat_op_t<lhs_t, rhs_t>>(mat, rhs, mat_op_name::add);
-}
-
-// ----------------------------------------------------------------------------
-
-template <typename llhs_t, typename lrhs_t, typename rlhs_t, typename rrhs_t>
-mat_op_t<mat_op_t<llhs_t, lrhs_t>, mat_op_t<rlhs_t, rrhs_t>> operator+ (
-    const mat_op_t<llhs_t, lrhs_t>& lhs,
-    const mat_op_t<rlhs_t, rrhs_t>& rhs)
-{
-    return mat_op_t<mat_op_t<llhs_t, lrhs_t>, mat_op_t<rlhs_t, rrhs_t>>(
-        lhs, rhs, mat_op_name::add);
-}
-
-// ----------------------------------------------------------------------------
-
-mat_op_t<mat_t, mat_t> operator+ (const mat_t& l_mat, const mat_t& r_mat);
-
-// ----------------------------------------------------------------------------
-
-mat_op_t<mat_t, mat_t> operator* (const mat_t& l_mat, const mat_t& r_mat);
-
+// including a header file for operator overloading
+#include "mat_ops.hpp"
 
 
 } // namespace linalg
 
-#endif // MATRIX_H
+#endif // MATRIX_HPP

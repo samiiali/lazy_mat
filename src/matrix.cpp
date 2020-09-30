@@ -12,6 +12,16 @@ mat_t::mat_t (size_t nrow, size_t ncol, mat_fmt fmt)
 
 // ----------------------------------------------------------------------------
 
+mat_t& mat_t::operator= (const mat_t& rhs)
+{
+    assert(_nrow == rhs._nrow && _ncol == rhs._ncol);
+    _fmt = rhs._fmt;
+    _data = rhs._data;
+    return *this;
+}
+
+// ----------------------------------------------------------------------------
+
 double& mat_t::operator() (size_t i, size_t j)
 {
     if (_fmt == mat_fmt::row_major)
@@ -42,6 +52,13 @@ double mat_t::operator() (size_t i, size_t j) const
 mat_op_t<mat_t, mat_t> operator+ (const mat_t& l_mat, const mat_t& r_mat)
 {
     return mat_op_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::add);
+}
+
+// ----------------------------------------------------------------------------
+
+mat_op_t<mat_t, mat_t> operator- (const mat_t& l_mat, const mat_t& r_mat)
+{
+    return mat_op_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::sub);
 }
 
 // ----------------------------------------------------------------------------
