@@ -13,8 +13,14 @@ TEST (test_suite, init_row_major)
 {
     linalg::mat_t mat1(2,2);
     mat1(0,1) = 1.0;
+    linalg::mat_t mat2(2,2);
+    mat1 = mat1; // copy assignment to self
+    mat1 = std::move(mat1); // move assignment to self
     ASSERT_EQ(mat1._data.size(), 4);
     ASSERT_EQ(mat1._data[1], 1.0);
+    mat2 = std::move(mat1);
+    ASSERT_EQ(mat2._data.size(), 4);
+    ASSERT_EQ(mat2._data[1], 1.0);
 }
 
 TEST (test_suite, assign_failure)
