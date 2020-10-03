@@ -5,14 +5,15 @@ namespace linalg
 
 // ----------------------------------------------------------------------------
 
-mat_t::mat_t () : size_set(false)
+mat_t::mat_t (mat_fmt fmt) 
+:   _fmt(fmt),_size_set(false)
 {
 }
 
 // ----------------------------------------------------------------------------
 
 mat_t::mat_t (size_t nrow, size_t ncol, mat_fmt fmt)
-:   _nrow(nrow), _ncol(ncol), _data(nrow * ncol), _fmt(fmt), size_set(true)
+:   _nrow(nrow), _ncol(ncol), _data(nrow * ncol), _fmt(fmt), _size_set(true)
 {
 }
 
@@ -22,7 +23,7 @@ mat_t& mat_t::operator= (const mat_t& rhs)
 {
     if (&rhs == this)
         return *this;
-    if (size_set) {
+    if (_size_set) {
         assert(_nrow == rhs._nrow && _ncol == rhs._ncol);
         _fmt = rhs._fmt;
         _data = rhs._data;
@@ -31,7 +32,7 @@ mat_t& mat_t::operator= (const mat_t& rhs)
         _ncol = rhs._ncol;
         _fmt = rhs._fmt;
         _data = rhs._data;
-        size_set = true;
+        _size_set = true;
     }
     return *this;
 }
@@ -42,7 +43,7 @@ mat_t& mat_t::operator= (mat_t&& rhs)
 {
     if (&rhs == this)
         return *this;
-    if (size_set) {
+    if (_size_set) {
         assert(_nrow == rhs._nrow && _ncol == rhs._ncol);
         _fmt = rhs._fmt;
         _data = std::move(rhs._data);
@@ -51,7 +52,7 @@ mat_t& mat_t::operator= (mat_t&& rhs)
         _ncol = rhs._ncol;
         _fmt = rhs._fmt;
         _data = std::move(rhs._data);
-        size_set = true;
+        _size_set = true;
     }
     return *this;
 }
@@ -60,7 +61,7 @@ mat_t& mat_t::operator= (mat_t&& rhs)
 
 double& mat_t::operator() (size_t i, size_t j)
 {
-    assert(size_set);
+    assert(_size_set);
     if (_fmt == mat_fmt::row_major)
         return _data[i * _ncol + j];
     else
@@ -71,7 +72,7 @@ double& mat_t::operator() (size_t i, size_t j)
 
 double mat_t::operator() (size_t i, size_t j) const
 {
-    assert(size_set);
+    assert(_size_set);
     if (_fmt == mat_fmt::row_major)
         return _data[i * _ncol + j];
     else

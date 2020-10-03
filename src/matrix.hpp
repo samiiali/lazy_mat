@@ -49,7 +49,7 @@ public:
 class mat_t
 {
 public:
-    mat_t ();
+    mat_t (mat_fmt fmt = mat_fmt::row_major);
 
     mat_t (size_t nrow, size_t ncol, mat_fmt fmt = mat_fmt::row_major);
 
@@ -76,7 +76,7 @@ public:
     size_t _ncol;
     std::vector<double> _data;
     mat_fmt _fmt{mat_fmt::row_major};
-    bool size_set;
+    bool _size_set;
 };
 
 // ----------------------------------------------------------------------------
@@ -141,7 +141,7 @@ mat_t::mat_t (const mat_op_t<lhs_t, rhs_t>& op)
     _nrow = op._nrow;
     _ncol = op._ncol;
     _data.resize(op._ncol * op._nrow);
-    size_set = true;
+    _size_set = true;
     for (size_t i = 0; i < _nrow; ++i)
         for (size_t j = 0; j < _ncol; ++j)
             operator()(i, j) = op(i,j);
@@ -152,12 +152,13 @@ mat_t::mat_t (const mat_op_t<lhs_t, rhs_t>& op)
 template <typename lhs_t, typename rhs_t>
 mat_t& mat_t::operator= (const mat_op_t<lhs_t, rhs_t>& op)
 {
-    if (size_set) {
+    if (_size_set) {
         assert(this->_nrow == op._nrow && this->_ncol == op._ncol);
     } else {
         _nrow = op._nrow;
         _ncol = op._ncol;
-        size_set = true;
+        _data.resize(_nrow * _ncol);
+        _size_set = true;
     }
     for (size_t i = 0; i < _nrow; ++i)
         for (size_t j = 0; j < _ncol; ++j)
