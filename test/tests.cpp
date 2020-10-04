@@ -14,46 +14,56 @@ TEST (test_suite, empty_ctor)
     linalg::mat_t mat1(2,2);
     mat1(0,1) = 1.2;
     linalg::mat_t mat2;
+    std::ostringstream output;
+    output << mat2;
+    EXPECT_EQ(output.str(), "\n");
     mat2 = mat1;
-    linalg::mat_t mat3(linalg::mat_fmt::col_major);
+    linalg::mat_t mat3(linalg::stor_fmt::col_maj);
     mat3 = std::move(mat1);
-    ASSERT_EQ(mat3._data[1], 1.2);
+    ASSERT_EQ(mat3.data()[1], 1.2);
 }
 
-TEST (test_suite, init_row_major)
+TEST (test_suite, init_row_maj)
 {
     linalg::mat_t mat1(2,2);
     mat1(0,1) = 1.0;
     linalg::mat_t mat2(2,2);
     mat1 = mat1; // copy assignment to self
     mat1 = std::move(mat1); // move assignment to self
-    ASSERT_EQ(mat1._data.size(), 4);
-    ASSERT_EQ(mat1._data[1], 1.0);
+    ASSERT_EQ(mat1.data().size(), 4);
+    ASSERT_EQ(mat1.data()[1], 1.0);
     mat2 = std::move(mat1);
-    ASSERT_EQ(mat2._data.size(), 4);
-    ASSERT_EQ(mat2._data[1], 1.0);
+    ASSERT_EQ(mat2.data().size(), 4);
+    ASSERT_EQ(mat2.data()[1], 1.0);
 }
 
 TEST (test_suite, assign_failure)
 {
-    EXPECT_DEATH({
-            linalg::mat_t mat1(2,2);
-            mat1(0,1) = 1.0;
-            linalg::mat_t mat2(2,3);
-            mat2 = mat1;
-        }, ".*");
+    linalg::mat_t mat1(2,2);
+    mat1(0,1) = 1.0;
+    linalg::mat_t mat2(2,3);
+    mat2 = mat1; // this copy should work ... dont argue with me
+    EXPECT_EQ(mat2(0,1), 1.0);
 }
 
-TEST (test_suite, init_col_major)
+TEST (test_suite, init_col_maj)
 {
-    linalg::mat_t mat1(2,2, linalg::mat_fmt::col_major);
+    linalg::mat_t mat1(2,2, linalg::stor_fmt::col_maj);
     mat1(0,1) = 1.0;
-    EXPECT_EQ(mat1._data[2], 1.0);
+    EXPECT_EQ(mat1.data()[2], 1.0);
+    EXPECT_DEATH({
+            linalg::mat_t mat2(1,2);
+            mat2 = std::move(mat1);
+        }, ".*");
+    EXPECT_DEATH({
+            linalg::mat_t mat2(2,1);
+            mat2 = std::move(mat1);
+        }, ".*");
 }
 
 TEST (test_suite, output)
 {
-    linalg::mat_t mat1(2,2, linalg::mat_fmt::col_major);
+    linalg::mat_t mat1(2,2, linalg::stor_fmt::col_maj);
     mat1(0,1) = 1.0;
     std::ostringstream output;
     output << mat1;
@@ -95,7 +105,7 @@ TEST (test_suite, mult_test)
     mat1(0,0) = mat1(0,1) = mat2(0,0) = mat2(1,0) = 1.0;
     linalg::mat_t mat3 = mat1 * mat2;
     EXPECT_EQ(mat3(0,0), 2.0);
-    linalg::mat_t mat5(linalg::mat_fmt::col_major);
+    linalg::mat_t mat5(linalg::stor_fmt::col_maj);
     mat5 = mat1 * mat2;
     EXPECT_EQ(mat5(0,0), 2.0);
     EXPECT_DEATH({

@@ -5,36 +5,16 @@ namespace linalg
 
 // ----------------------------------------------------------------------------
 
-mat_t::mat_t (mat_fmt fmt) 
-:   _fmt(fmt),_size_set(false)
+mat_t::mat_t (stor_fmt fmt) 
+:   _stor(fmt)
 {
 }
 
 // ----------------------------------------------------------------------------
 
-mat_t::mat_t (size_t nrow, size_t ncol, mat_fmt fmt)
-:   _nrow(nrow), _ncol(ncol), _data(nrow * ncol), _fmt(fmt), _size_set(true)
+mat_t::mat_t (int nrow, int ncol, stor_fmt fmt)
+:   _stor({nrow, ncol}, fmt)
 {
-}
-
-// ----------------------------------------------------------------------------
-
-mat_t& mat_t::operator= (const mat_t& rhs)
-{
-    if (&rhs == this)
-        return *this;
-    if (_size_set) {
-        assert(_nrow == rhs._nrow && _ncol == rhs._ncol);
-        _fmt = rhs._fmt;
-        _data = rhs._data;
-    } else {
-        _nrow = rhs._nrow;
-        _ncol = rhs._ncol;
-        _fmt = rhs._fmt;
-        _data = rhs._data;
-        _size_set = true;
-    }
-    return *this;
 }
 
 // ----------------------------------------------------------------------------
@@ -43,76 +23,74 @@ mat_t& mat_t::operator= (mat_t&& rhs)
 {
     if (&rhs == this)
         return *this;
-    if (_size_set) {
-        assert(_nrow == rhs._nrow && _ncol == rhs._ncol);
-        _fmt = rhs._fmt;
-        _data = std::move(rhs._data);
+    if (!empty()) {
+        assert(nrow() == rhs.nrow() && ncol() == rhs.ncol());
+        _stor = std::move(rhs._stor);
     } else {
-        _nrow = rhs._nrow;
-        _ncol = rhs._ncol;
-        _fmt = rhs._fmt;
-        _data = std::move(rhs._data);
-        _size_set = true;
+        _stor = std::move(rhs._stor);
     }
     return *this;
 }
 
 // ----------------------------------------------------------------------------
 
-double& mat_t::operator() (size_t i, size_t j)
+double& mat_t::operator() (int i, int j)
 {
-    assert(_size_set);
-    if (_fmt == mat_fmt::row_major)
-        return _data[i * _ncol + j];
-    else
-        return _data[j * _nrow + i];
+    return _stor({i,j});
 }
 
 // ----------------------------------------------------------------------------
 
-double mat_t::operator() (size_t i, size_t j) const
+double mat_t::operator() (int i, int j) const
 {
-    assert(_size_set);
-    if (_fmt == mat_fmt::row_major)
-        return _data[i * _ncol + j];
-    else
-        return _data[j * _nrow + i];
+    return _stor({i,j});
 }
 
 // ----------------------------------------------------------------------------
 
 void mat_t::assign (const double val)
 {
-    _data.assign(_data.size(), val);
+    _stor.assign(val);
 }
 
 // ----------------------------------------------------------------------------
 
-mat_op_t<mat_t, mat_t> operator+ (const mat_t& l_mat, const mat_t& r_mat)
+const std::vector<double>& mat_t::data () const
 {
-    return mat_op_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::add);
+    return _stor._data;
 }
 
 // ----------------------------------------------------------------------------
 
-mat_op_t<mat_t, mat_t> operator- (const mat_t& l_mat, const mat_t& r_mat)
+op_res_t<mat_t, mat_t> operator+ (const mat_t& l_mat, const mat_t& r_mat)
 {
-    return mat_op_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::sub);
+    return op_res_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::add);
 }
 
 // ----------------------------------------------------------------------------
 
-mat_op_t<mat_t, mat_t> operator* (const mat_t& l_mat, const mat_t& r_mat)
+op_res_t<mat_t, mat_t> operator- (const mat_t& l_mat, const mat_t& r_mat)
 {
-    return mat_op_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::mult);
+    return op_res_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::sub);
+}
+
+// ----------------------------------------------------------------------------
+
+op_res_t<mat_t, mat_t> operator* (const mat_t& l_mat, const mat_t& r_mat)
+{
+    return op_res_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::mult);
 }
 
 // ----------------------------------------------------------------------------
 
 std::ostream& operator<< (std::ostream& os, const mat_t& mat)
 {
-    for (size_t i = 0; i < mat._nrow; ++i) {
-        for (size_t j = 0; j < mat._ncol; ++j) {
+    if (mat.empty()) {
+        os << "\n";
+        return os;
+    }
+    for (size_t i = 0; i < mat.nrow(); ++i) {
+        for (size_t j = 0; j < mat.ncol(); ++j) {
             char buf[13];
             snprintf(buf, 13, "%12.4e", mat(i, j));
             os << buf;

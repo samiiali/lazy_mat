@@ -18,7 +18,7 @@ message ("++ Git commit hash: ${GIT_COMMIT_HASH}")
 
 include_directories(src)
 
-add_compile_options("-Wshadow;-Werror")
+add_compile_options("-pedantic;-Wall;-Wextra;-Wshadow;-Werror;-Wno-unused-parameter")
 add_executable(lazy_mat)
 add_executable(tests)
 
