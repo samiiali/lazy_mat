@@ -1,3 +1,15 @@
+#ifndef MAT_OPS_HPP
+#define MAT_OPS_HPP
+
+
+#include "op_res.hpp"
+
+
+namespace linalg
+{
+
+class mat_t;
+
 // ----------------------------------------------------------------------------
 // overloading + for mat_op + mat
 template <typename lhs_t, typename rhs_t>
@@ -99,4 +111,7 @@ op_res_t<op_res_t<llhs_t, lrhs_t>, op_res_t<rlhs_t, rrhs_t>> operator* (
 
 op_res_t<mat_t, mat_t> operator* (const mat_t& l_mat, const mat_t& r_mat);
 
-// #endif
+
+}
+
+#endif // MAT_OPS_HPP

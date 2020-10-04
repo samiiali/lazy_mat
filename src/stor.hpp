@@ -1,8 +1,10 @@
+#ifndef STORG_HPP
+#define STORG_HPP
+
+
 #include <cstddef>
 #include <vector>
 
-#ifndef STORG_HPP
-#define STORG_HPP
 
 namespace linalg
 {
