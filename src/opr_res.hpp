@@ -1,5 +1,5 @@
-#ifndef OP_RES_HPP
-#define OP_RES_HPP
+#ifndef opr_res_HPP
+#define opr_res_HPP
 
 
 #include <cstddef> // for size_t
@@ -19,15 +19,15 @@ enum class mat_op_name // matrix operation name
 
 // ============================================================================
 
-// this is a type to carry matrix operation result, hence op_res_t.
+// this is a type to carry matrix operation result, hence opr_res_t.
 // for example when user sets mat3 = mat1 * mat2, we construct a
-// op_res_t object from mat1 * mat2 first and then assign it to mat3
+// opr_res_t object from mat1 * mat2 first and then assign it to mat3
 // at calculation time.
 template <typename lhs_t, typename rhs_t>
-class op_res_t
+class opr_res_t
 {
 public:
-    op_res_t (const lhs_t& lhs, const rhs_t& rhs, mat_op_name op);
+    opr_res_t (const lhs_t& lhs, const rhs_t& rhs, mat_op_name op);
 
     double operator() (size_t i, size_t j) const;
 
@@ -45,7 +45,7 @@ public:
 // ----------------------------------------------------------------------------
 
 template <typename lhs_t, typename rhs_t>
-double op_res_t<lhs_t, rhs_t>::operator() (size_t i, size_t j) const
+double opr_res_t<lhs_t, rhs_t>::operator() (size_t i, size_t j) const
 {
     double out = 0.0;
     switch (_op) {
@@ -70,7 +70,7 @@ double op_res_t<lhs_t, rhs_t>::operator() (size_t i, size_t j) const
 // ----------------------------------------------------------------------------
 
 template <typename lhs_t, typename rhs_t>
-op_res_t<lhs_t, rhs_t>::op_res_t (
+opr_res_t<lhs_t, rhs_t>::opr_res_t (
     const lhs_t& lhs, const rhs_t& rhs, mat_op_name op)
   : _lhs(lhs), _rhs(rhs), _op(op)
 {
@@ -96,4 +96,4 @@ op_res_t<lhs_t, rhs_t>::op_res_t (
 }
 
 
-#endif // OP_RES_HPP
+#endif // opr_res_HPP

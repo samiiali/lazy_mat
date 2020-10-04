@@ -7,7 +7,7 @@
 #include <vector>
 #include <cassert>
 #include "stor.hpp"
-#include "op_res.hpp"
+#include "opr_res.hpp"
 #include "mat_ops.hpp"
 
 
@@ -16,7 +16,7 @@ namespace linalg
 
 // ============================================================================
 
-// this class interacts with op_res_t. each class that can be an
+// this class interacts with opr_res_t. each class that can be an
 // operand will have an oprnd_t, to interact with other operands. for example
 // mat_t will interact with vec_t in vec14 = mat44 * vec14. the idea is that
 // a matrix has an independant existance beyond mat operations, and we want it
@@ -24,7 +24,7 @@ namespace linalg
 // over inheritance).
 class oprnd_t
 {
-    oprnd_t () {}
+    oprnd_t ();
 };
 
 // ============================================================================
@@ -39,14 +39,14 @@ public:
     mat_t (const mat_t& rhs) = default;
 
     template <typename lhs_t, typename rhs_t>
-    mat_t (const op_res_t<lhs_t, rhs_t>& op);
+    mat_t (const opr_res_t<lhs_t, rhs_t>& op);
 
     mat_t& operator= (const mat_t& rhs) = default;
 
     mat_t& operator= (mat_t&& rhs); // required for move to self
 
     template <typename lhs_t, typename rhs_t>
-    mat_t& operator= (const op_res_t<lhs_t, rhs_t>& op);
+    mat_t& operator= (const opr_res_t<lhs_t, rhs_t>& op);
 
     void assign (const double val);
 
@@ -57,6 +57,10 @@ public:
     double operator() (int i, int j) const;
 
     const std::vector<double>& data () const;
+
+    double data_at (const int idx) const;
+
+    void resize (const int nrow, const int ncol);
 
     size_t nrow () const { return _stor._dim[0]; }
 
@@ -70,29 +74,27 @@ public:
 // ----------------------------------------------------------------------------
 
 template <typename lhs_t, typename rhs_t>
-mat_t::mat_t (const op_res_t<lhs_t, rhs_t>& op)
+mat_t::mat_t (const opr_res_t<lhs_t, rhs_t>& op)
 {
-    _stor._dim = {op._nrow, op._ncol};
-    _stor._data.resize(op._nrow * op._ncol);
-    for (size_t i = 0; i < op._nrow; ++i)
-        for (size_t j = 0; j < op._ncol; ++j)
+    _stor.resize({op.nrow(), op.ncol()});
+    for (size_t i = 0; i < op.nrow(); ++i)
+        for (size_t j = 0; j < op.ncol(); ++j)
             operator()(i, j) = op(i,j);
 }
 
 // ----------------------------------------------------------------------------
 
 template <typename lhs_t, typename rhs_t>
-mat_t& mat_t::operator= (const op_res_t<lhs_t, rhs_t>& op)
+mat_t& mat_t::operator= (const opr_res_t<lhs_t, rhs_t>& op)
 {
-    if (!_stor._dim.empty()) {
-        assert(nrow() == op._nrow);
-        assert(ncol() == op._ncol);
+    if (!empty()) {
+        assert(nrow() == op.nrow());
+        assert(ncol() == op.ncol());
     } else {
-        _stor._dim = {op._nrow, op._ncol};
-        _stor._data.resize(op._nrow * op._ncol);
+        _stor.resize({op.nrow(), op.ncol()});
     }
-    for (size_t i = 0; i < op._nrow; ++i)
-        for (size_t j = 0; j < op._ncol; ++j)
+    for (size_t i = 0; i < op.nrow(); ++i)
+        for (size_t j = 0; j < op.ncol(); ++j)
             operator()(i, j) = op(i,j);
     return *this;
 }

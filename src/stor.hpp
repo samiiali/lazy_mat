@@ -4,6 +4,7 @@
 
 #include <cstddef>
 #include <vector>
+#include <initializer_list>
 
 
 namespace linalg
@@ -26,15 +27,20 @@ class stor_t
 public:
     stor_t (const stor_fmt fmt = stor_fmt::row_maj);
 
-    stor_t (const std::vector<int>& dim, const stor_fmt fmt);
+    void resize (const std::initializer_list<size_t>& dim, const stor_fmt fmt);
 
-    double& operator() (const std::vector<int>& idx);
-    double operator() (const std::vector<int>& idx) const;
+    void resize (const std::initializer_list<size_t>& dim);
+
+    double& operator() (const std::initializer_list<size_t>& idx);
+
+    double operator() (const std::initializer_list<size_t>& idx) const;
+
+    size_t index (const std::initializer_list<size_t>& idx) const;
 
     void assign (const double val);
 
-    std::vector<size_t> _dim;
     stor_fmt _fmt;
+    std::vector<size_t> _dim;
     std::vector<double> _data;
 };
 

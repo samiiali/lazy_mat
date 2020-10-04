@@ -1,5 +1,6 @@
 #include <iostream>
 #include <gtest/gtest.h>
+#include "stor.hpp"
 #include "matrix.hpp"
 
 int main (int argc, char* argv[])
@@ -9,9 +10,30 @@ int main (int argc, char* argv[])
     return rc;
 }
 
+TEST (test_suite, storage_test)
+{
+    linalg::stor_t stor1;
+    stor1.resize({4,3,5});
+    ASSERT_EQ(stor1.index({2,1,3}), 38);
+    ASSERT_EQ(stor1.index({0,0,0}), 0);
+    ASSERT_EQ(stor1.index({3,2,4}), 4*3*5-1);
+    ASSERT_DEATH(stor1.index({3,3,4}), ".*");
+    linalg::stor_t stor2(linalg::stor_fmt::col_maj);
+    stor2.resize({4,3,5});
+    ASSERT_EQ(stor2.index({2,1,3}), 42);
+    ASSERT_EQ(stor1.index({0,0,0}), 0);
+    ASSERT_EQ(stor2.index({3,2,4}), 4*3*5-1);
+    ASSERT_DEATH(stor2.index({3,3,4}), ".*");
+}
+
 TEST (test_suite, empty_ctor)
 {
     linalg::mat_t mat1(2,2);
+    EXPECT_DEATH(mat1.resize(-1,1), ".*");
+    EXPECT_DEATH(mat1.resize(1,-1), ".*");
+    mat1.resize(1,2);
+    ASSERT_EQ(mat1.data().size(), 2);
+    mat1.resize(2,2);
     mat1(0,1) = 1.2;
     linalg::mat_t mat2;
     std::ostringstream output;
@@ -20,7 +42,7 @@ TEST (test_suite, empty_ctor)
     mat2 = mat1;
     linalg::mat_t mat3(linalg::stor_fmt::col_maj);
     mat3 = std::move(mat1);
-    ASSERT_EQ(mat3.data()[1], 1.2);
+    ASSERT_EQ(mat3.data_at(1), 1.2);
 }
 
 TEST (test_suite, init_row_maj)
@@ -31,10 +53,10 @@ TEST (test_suite, init_row_maj)
     mat1 = mat1; // copy assignment to self
     mat1 = std::move(mat1); // move assignment to self
     ASSERT_EQ(mat1.data().size(), 4);
-    ASSERT_EQ(mat1.data()[1], 1.0);
+    ASSERT_EQ(mat1.data_at(1), 1.0);
     mat2 = std::move(mat1);
     ASSERT_EQ(mat2.data().size(), 4);
-    ASSERT_EQ(mat2.data()[1], 1.0);
+    ASSERT_EQ(mat2.data_at(1), 1.0);
 }
 
 TEST (test_suite, assign_failure)
@@ -50,15 +72,10 @@ TEST (test_suite, init_col_maj)
 {
     linalg::mat_t mat1(2,2, linalg::stor_fmt::col_maj);
     mat1(0,1) = 1.0;
-    EXPECT_EQ(mat1.data()[2], 1.0);
-    EXPECT_DEATH({
-            linalg::mat_t mat2(1,2);
-            mat2 = std::move(mat1);
-        }, ".*");
-    EXPECT_DEATH({
-            linalg::mat_t mat2(2,1);
-            mat2 = std::move(mat1);
-        }, ".*");
+    EXPECT_EQ(mat1.data_at(2), 1.0);
+    linalg::mat_t mat2(1,2);
+    mat2 = std::move(mat1);
+    EXPECT_EQ(mat2.data_at(2), 1.0);
 }
 
 TEST (test_suite, output)

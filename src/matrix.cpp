@@ -13,8 +13,9 @@ mat_t::mat_t (stor_fmt fmt)
 // ----------------------------------------------------------------------------
 
 mat_t::mat_t (int nrow, int ncol, stor_fmt fmt)
-:   _stor({nrow, ncol}, fmt)
 {
+    assert(0 < nrow && 0 < ncol);
+    _stor.resize({size_t(nrow), size_t(ncol)}, fmt);
 }
 
 // ----------------------------------------------------------------------------
@@ -23,27 +24,24 @@ mat_t& mat_t::operator= (mat_t&& rhs)
 {
     if (&rhs == this)
         return *this;
-    if (!empty()) {
-        assert(nrow() == rhs.nrow() && ncol() == rhs.ncol());
-        _stor = std::move(rhs._stor);
-    } else {
-        _stor = std::move(rhs._stor);
-    }
+    _stor = std::move(rhs._stor);
     return *this;
 }
 
 // ----------------------------------------------------------------------------
 
-double& mat_t::operator() (int i, int j)
+double& mat_t::operator() (int row, int col)
 {
-    return _stor({i,j});
+    assert (0 <= row && 0 <= col);
+    return _stor({size_t(row), size_t(col)});
 }
 
 // ----------------------------------------------------------------------------
 
-double mat_t::operator() (int i, int j) const
+double mat_t::operator() (int row, int col) const
 {
-    return _stor({i,j});
+    assert (0 <= row && 0 <= col);
+    return _stor({size_t(row), size_t(col)});
 }
 
 // ----------------------------------------------------------------------------
@@ -55,6 +53,14 @@ void mat_t::assign (const double val)
 
 // ----------------------------------------------------------------------------
 
+void mat_t::resize (const int nrow, const int ncol)
+{
+    assert(0 < nrow && 0 < ncol);
+    _stor.resize({size_t(nrow), size_t(ncol)});
+}
+
+// ----------------------------------------------------------------------------
+
 const std::vector<double>& mat_t::data () const
 {
     return _stor._data;
@@ -62,23 +68,30 @@ const std::vector<double>& mat_t::data () const
 
 // ----------------------------------------------------------------------------
 
-op_res_t<mat_t, mat_t> operator+ (const mat_t& l_mat, const mat_t& r_mat)
+double mat_t::data_at (const int idx) const
 {
-    return op_res_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::add);
+    return _stor._data[idx];
 }
 
 // ----------------------------------------------------------------------------
 
-op_res_t<mat_t, mat_t> operator- (const mat_t& l_mat, const mat_t& r_mat)
+opr_res_t<mat_t, mat_t> operator+ (const mat_t& l_mat, const mat_t& r_mat)
 {
-    return op_res_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::sub);
+    return opr_res_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::add);
 }
 
 // ----------------------------------------------------------------------------
 
-op_res_t<mat_t, mat_t> operator* (const mat_t& l_mat, const mat_t& r_mat)
+opr_res_t<mat_t, mat_t> operator- (const mat_t& l_mat, const mat_t& r_mat)
 {
-    return op_res_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::mult);
+    return opr_res_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::sub);
+}
+
+// ----------------------------------------------------------------------------
+
+opr_res_t<mat_t, mat_t> operator* (const mat_t& l_mat, const mat_t& r_mat)
+{
+    return opr_res_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::mult);
 }
 
 // ----------------------------------------------------------------------------
