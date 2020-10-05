@@ -8,11 +8,12 @@
 #include <cassert>
 #include "stor.hpp"
 #include "opr_res.hpp"
-#include "mat_ops.hpp"
 
 
 namespace linalg
 {
+
+class mat_t;
 
 // ============================================================================
 
@@ -22,9 +23,24 @@ namespace linalg
 // a matrix has an independant existance beyond mat operations, and we want it
 // to have an operand instead of being an operand (favor composition
 // over inheritance).
-class oprnd_t
+class oprand_t
 {
-    oprnd_t ();
+public:
+    oprand_t (const mat_t& mat);
+
+    double operator() (size_t i, size_t j) const;
+
+    size_t nrow () const { return _stor._dim[0]; }
+
+    size_t ncol () const { return _stor._dim[1]; };
+
+    const stor_t& _stor;
+};
+
+// ============================================================================
+
+class vec_t
+{
 };
 
 // ============================================================================
@@ -101,6 +117,9 @@ mat_t& mat_t::operator= (const opr_res_t<lhs_t, rhs_t>& op)
 
 
 } // namespace linalg
+
+
+#include "mat_ops.hpp"
 
 
 #endif // MATRIX_HPP

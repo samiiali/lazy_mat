@@ -1,7 +1,22 @@
 #include "matrix.hpp"
+#include "stor.hpp"
 
 namespace linalg
 {
+
+// ----------------------------------------------------------------------------
+
+oprand_t::oprand_t (const mat_t& mat)
+:   _stor(mat._stor)
+{
+}
+
+// ----------------------------------------------------------------------------
+
+double oprand_t::operator() (size_t row, size_t col) const
+{
+    return _stor({row, col});
+}
 
 // ----------------------------------------------------------------------------
 
@@ -75,27 +90,6 @@ double mat_t::data_at (const int idx) const
 
 // ----------------------------------------------------------------------------
 
-opr_res_t<mat_t, mat_t> operator+ (const mat_t& l_mat, const mat_t& r_mat)
-{
-    return opr_res_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::add);
-}
-
-// ----------------------------------------------------------------------------
-
-opr_res_t<mat_t, mat_t> operator- (const mat_t& l_mat, const mat_t& r_mat)
-{
-    return opr_res_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::sub);
-}
-
-// ----------------------------------------------------------------------------
-
-opr_res_t<mat_t, mat_t> operator* (const mat_t& l_mat, const mat_t& r_mat)
-{
-    return opr_res_t<mat_t, mat_t>(l_mat, r_mat, mat_op_name::mult);
-}
-
-// ----------------------------------------------------------------------------
-
 std::ostream& operator<< (std::ostream& os, const mat_t& mat)
 {
     if (mat.empty()) {
@@ -111,6 +105,33 @@ std::ostream& operator<< (std::ostream& os, const mat_t& mat)
         os << "\n";
     }
     return os;
+}
+
+// ----------------------------------------------------------------------------
+
+opr_res_t<oprand_t, oprand_t> operator+ (
+    const oprand_t& l_oprand, const oprand_t& r_oprand
+) {
+    return opr_res_t<oprand_t, oprand_t>(
+        l_oprand, r_oprand, mat_op_name::add);
+}
+
+// ----------------------------------------------------------------------------
+
+opr_res_t<oprand_t, oprand_t> operator- (
+    const oprand_t& l_oprand, const oprand_t& r_oprand
+) {
+    return opr_res_t<oprand_t, oprand_t>(
+        l_oprand, r_oprand, mat_op_name::sub);
+}
+
+// ----------------------------------------------------------------------------
+
+opr_res_t<oprand_t, oprand_t> operator* (
+    const oprand_t& l_oprand, const oprand_t& r_oprand
+) {
+    return opr_res_t<oprand_t, oprand_t>(
+        l_oprand, r_oprand, mat_op_name::mult);
 }
 
 

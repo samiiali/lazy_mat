@@ -8,24 +8,31 @@
 namespace linalg
 {
 
-class mat_t;
+class oprand_t;
 
 // ----------------------------------------------------------------------------
-// overloading + for mat_op + mat
+
+opr_res_t<oprand_t, oprand_t> operator+ (
+    const oprand_t& l_oprand, const oprand_t& r_oprand);
+
+// ----------------------------------------------------------------------------
+// overloading + for mat_op + oprand
 template <typename lhs_t, typename rhs_t>
-opr_res_t<opr_res_t<lhs_t, rhs_t>, mat_t> operator+ (
-    const opr_res_t<lhs_t, rhs_t>& lhs, const mat_t& mat)
+opr_res_t<opr_res_t<lhs_t, rhs_t>, oprand_t> operator+ (
+    const opr_res_t<lhs_t, rhs_t>& lhs, const oprand_t& oprand)
 {
-    return opr_res_t<opr_res_t<lhs_t, rhs_t>, mat_t>(lhs, mat, mat_op_name::add);
+    return opr_res_t<opr_res_t<lhs_t, rhs_t>, oprand_t>(
+        lhs, oprand, mat_op_name::add);
 }
 
 // ----------------------------------------------------------------------------
-// overloading + for mat + mat_op
+// overloading + for oprand + mat_op
 template <typename lhs_t, typename rhs_t>
-opr_res_t<mat_t, opr_res_t<lhs_t, rhs_t>> operator+ (
-    const mat_t& mat, const opr_res_t<lhs_t, rhs_t>& rhs)
+opr_res_t<oprand_t, opr_res_t<lhs_t, rhs_t>> operator+ (
+    const oprand_t& oprand, const opr_res_t<lhs_t, rhs_t>& rhs)
 {
-    return opr_res_t<mat_t, opr_res_t<lhs_t, rhs_t>>(mat, rhs, mat_op_name::add);
+    return opr_res_t<oprand_t, opr_res_t<lhs_t, rhs_t>>(
+        oprand, rhs, mat_op_name::add);
 }
 
 // ----------------------------------------------------------------------------
@@ -41,24 +48,26 @@ opr_res_t<opr_res_t<llhs_t, lrhs_t>, opr_res_t<rlhs_t, rrhs_t>> operator+ (
 
 // ----------------------------------------------------------------------------
 
-opr_res_t<mat_t, mat_t> operator+ (const mat_t& l_mat, const mat_t& r_mat);
+opr_res_t<oprand_t, oprand_t> operator- (
+    const oprand_t& l_oprand, const oprand_t& r_oprand);
 
 // ----------------------------------------------------------------------------
-// overloading + for mat_op - mat
+// overloading + for mat_op - oprand
 template <typename lhs_t, typename rhs_t>
-opr_res_t<opr_res_t<lhs_t, rhs_t>, mat_t> operator- (
-    const opr_res_t<lhs_t, rhs_t>& lhs, const mat_t& mat)
+opr_res_t<opr_res_t<lhs_t, rhs_t>, oprand_t> operator- (
+    const opr_res_t<lhs_t, rhs_t>& lhs, const oprand_t& oprand)
 {
-    return opr_res_t<opr_res_t<lhs_t, rhs_t>, mat_t>(lhs, mat, mat_op_name::sub);
+    return opr_res_t<opr_res_t<lhs_t, rhs_t>, oprand_t>(
+        lhs, oprand, mat_op_name::sub);
 }
 
 // ----------------------------------------------------------------------------
-// overloading + for mat - mat_op
+// overloading + for oprand - mat_op
 template <typename lhs_t, typename rhs_t>
-opr_res_t<mat_t, opr_res_t<lhs_t, rhs_t>> operator- (
-    const mat_t& mat, const opr_res_t<lhs_t, rhs_t>& rhs)
+opr_res_t<oprand_t, opr_res_t<lhs_t, rhs_t>> operator- (
+    const oprand_t& oprand, const opr_res_t<lhs_t, rhs_t>& rhs)
 {
-    return opr_res_t<mat_t, opr_res_t<lhs_t, rhs_t>>(mat, rhs, mat_op_name::sub);
+    return opr_res_t<oprand_t, opr_res_t<lhs_t, rhs_t>>(oprand, rhs, mat_op_name::sub);
 }
 
 // ----------------------------------------------------------------------------
@@ -74,26 +83,27 @@ opr_res_t<opr_res_t<llhs_t, lrhs_t>, opr_res_t<rlhs_t, rrhs_t>> operator- (
 
 // ----------------------------------------------------------------------------
 
-opr_res_t<mat_t, mat_t> operator- (const mat_t& l_mat, const mat_t& r_mat);
+opr_res_t<oprand_t, oprand_t> operator* (
+    const oprand_t& l_oprand, const oprand_t& r_oprand);
 
 // ----------------------------------------------------------------------------
-// overloading * for mat_op * mat
+// overloading * for mat_op * oprand
 template <typename lhs_t, typename rhs_t>
-opr_res_t<opr_res_t<lhs_t, rhs_t>, mat_t> operator* (
-    const opr_res_t<lhs_t, rhs_t>& lhs, const mat_t& mat)
+opr_res_t<opr_res_t<lhs_t, rhs_t>, oprand_t> operator* (
+    const opr_res_t<lhs_t, rhs_t>& lhs, const oprand_t& oprand)
 {
-    return opr_res_t<opr_res_t<lhs_t, rhs_t>, mat_t>(
-        lhs, mat, mat_op_name::mult);
+    return opr_res_t<opr_res_t<lhs_t, rhs_t>, oprand_t>(
+        lhs, oprand, mat_op_name::mult);
 }
 
 // ----------------------------------------------------------------------------
-// overloading + for mat + mat_op
+// overloading + for oprand + mat_op
 template <typename lhs_t, typename rhs_t>
-opr_res_t<mat_t, opr_res_t<lhs_t, rhs_t>> operator* (
-    const mat_t& mat, const opr_res_t<lhs_t, rhs_t>& rhs)
+opr_res_t<oprand_t, opr_res_t<lhs_t, rhs_t>> operator* (
+    const oprand_t& oprand, const opr_res_t<lhs_t, rhs_t>& rhs)
 {
-    return opr_res_t<mat_t, opr_res_t<lhs_t, rhs_t>>(
-        mat, rhs, mat_op_name::mult);
+    return opr_res_t<oprand_t, opr_res_t<lhs_t, rhs_t>>(
+        oprand, rhs, mat_op_name::mult);
 }
 
 // ----------------------------------------------------------------------------
@@ -106,10 +116,6 @@ opr_res_t<opr_res_t<llhs_t, lrhs_t>, opr_res_t<rlhs_t, rrhs_t>> operator* (
     return opr_res_t<opr_res_t<llhs_t, lrhs_t>, opr_res_t<rlhs_t, rrhs_t>>(
         lhs, rhs, mat_op_name::mult);
 }
-
-// ----------------------------------------------------------------------------
-
-opr_res_t<mat_t, mat_t> operator* (const mat_t& l_mat, const mat_t& r_mat);
 
 
 }
