@@ -10,31 +10,21 @@ namespace linalg
 
 // ----------------------------------------------------------------------------
 
-stor_t::stor_t (const stor_fmt fmt)
+stor_t::stor_t (const stor_fmt_t fmt)
 :   _fmt(fmt)
 {
 }
 
 // ----------------------------------------------------------------------------
 
-void stor_t::resize (
-    const std::initializer_list<size_t>& dim,
-    const stor_fmt fmt
-) {
+void stor_t::resize (const std::initializer_list<size_t>& dim)
+{
     _dim = dim;
-    _fmt = fmt;
     size_t data_size = 1;
     for (size_t i1 = 0; i1 < dim.size(); ++i1)
         data_size *= _dim[i1];
     if (data_size != _data.size())
         _data.resize(data_size);
-}
-
-// ----------------------------------------------------------------------------
-
-void stor_t::resize (const std::initializer_list<size_t>& dim)
-{
-    resize(dim, _fmt);
 }
 
 // ----------------------------------------------------------------------------
@@ -57,7 +47,7 @@ size_t stor_t::index (const std::initializer_list<size_t>& indices) const
 {
     assert(_dim.size() == indices.size());
     size_t idx = 0;
-    if (_fmt == stor_fmt::col_maj) {
+    if (_fmt == stor_fmt_t::col_maj) {
         auto fwd = indices.begin();
         size_t n_idx = 1;
         for (size_t i_dim : _dim) {
@@ -66,7 +56,7 @@ size_t stor_t::index (const std::initializer_list<size_t>& indices) const
             n_idx *= i_dim;
         }
     }
-    if (_fmt == stor_fmt::row_maj) {
+    if (_fmt == stor_fmt_t::row_maj) {
         auto bck = indices.end();
         size_t n_idx = 1;
         for (int i1 = _dim.size() - 1; i1 >= 0; --i1) {
@@ -83,6 +73,20 @@ size_t stor_t::index (const std::initializer_list<size_t>& indices) const
 void stor_t::assign (const double val)
 {
     _data.assign(_data.size(), val);
+}
+
+// ----------------------------------------------------------------------------
+
+mat_stor_t::mat_stor_t (stor_fmt_t fmt)
+:   _stor(fmt)
+{
+}
+
+// ----------------------------------------------------------------------------
+
+void mat_stor_t::resize (const size_t nrow, const size_t ncol)
+{
+    _stor.resize({nrow, ncol});
 }
 
 

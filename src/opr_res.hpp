@@ -35,37 +35,16 @@ public:
     
     size_t ncol() const { return _ncol; }
 
+    // stor_fmt is irrelevant in the operation result object, but we assign
+    // the storgae format based on the left operand for consistency
+    stor_fmt_t fmt () const { return _lhs.fmt(); }
+
     const lhs_t& _lhs;
     const rhs_t& _rhs;
     size_t _nrow; // non-const to be init'ed inside ctor
     size_t _ncol; // non-const to be init'ed inside ctor
     const mat_op_name _op;
 };
-
-// ----------------------------------------------------------------------------
-
-template <typename lhs_t, typename rhs_t>
-double opr_res_t<lhs_t, rhs_t>::operator() (size_t i, size_t j) const
-{
-    double out = 0.0;
-    switch (_op) {
-        case mat_op_name::add: {
-            out = _lhs(i, j) + _rhs(i, j);
-            break;
-        }
-        case mat_op_name::sub: {
-            out = _lhs(i, j) - _rhs(i, j);
-            break;
-        }
-        case mat_op_name::mult: {
-            assert(_lhs.ncol() == _rhs.nrow());
-            for (size_t k = 0; k < _lhs.ncol(); ++k)
-                out += _lhs(i, k) * _rhs(k, j);
-            break;
-        }
-    }
-    return out;
-}
 
 // ----------------------------------------------------------------------------
 
@@ -92,6 +71,32 @@ opr_res_t<lhs_t, rhs_t>::opr_res_t (
         }
     }
 }
+
+// ----------------------------------------------------------------------------
+
+template <typename lhs_t, typename rhs_t>
+double opr_res_t<lhs_t, rhs_t>::operator() (size_t i, size_t j) const
+{
+    double out = 0.0;
+    switch (_op) {
+        case mat_op_name::add: {
+            out = _lhs(i, j) + _rhs(i, j);
+            break;
+        }
+        case mat_op_name::sub: {
+            out = _lhs(i, j) - _rhs(i, j);
+            break;
+        }
+        case mat_op_name::mult: {
+            assert(_lhs.ncol() == _rhs.nrow());
+            for (size_t k = 0; k < _lhs.ncol(); ++k)
+                out += _lhs(i, k) * _rhs(k, j);
+            break;
+        }
+    }
+    return out;
+}
+
 
 }
 

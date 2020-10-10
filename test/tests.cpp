@@ -12,13 +12,13 @@ int main (int argc, char* argv[])
 
 TEST (test_suite, storage_test)
 {
-    linalg::stor_t stor1;
+    linalg::stor_t stor1(linalg::stor_fmt_t::row_maj);
     stor1.resize({4,3,5});
     ASSERT_EQ(stor1.index({2,1,3}), 38);
     ASSERT_EQ(stor1.index({0,0,0}), 0);
     ASSERT_EQ(stor1.index({3,2,4}), 4*3*5-1);
     ASSERT_DEATH(stor1.index({3,3,4}), ".*");
-    linalg::stor_t stor2(linalg::stor_fmt::col_maj);
+    linalg::stor_t stor2(linalg::stor_fmt_t::col_maj);
     stor2.resize({4,3,5});
     ASSERT_EQ(stor2.index({2,1,3}), 42);
     ASSERT_EQ(stor1.index({0,0,0}), 0);
@@ -40,7 +40,7 @@ TEST (test_suite, empty_ctor)
     output << mat2;
     EXPECT_EQ(output.str(), "\n");
     mat2 = mat1;
-    linalg::mat_t mat3(linalg::stor_fmt::col_maj);
+    linalg::mat_t mat3(linalg::stor_fmt_t::col_maj);
     mat3 = std::move(mat1);
     ASSERT_EQ(mat3.data_at(1), 1.2);
 }
@@ -70,7 +70,7 @@ TEST (test_suite, assign_failure)
 
 TEST (test_suite, init_col_maj)
 {
-    linalg::mat_t mat1(2,2, linalg::stor_fmt::col_maj);
+    linalg::mat_t mat1(2,2, linalg::stor_fmt_t::col_maj);
     mat1(0,1) = 1.0;
     EXPECT_EQ(mat1.data_at(2), 1.0);
     linalg::mat_t mat2(1,2);
@@ -80,7 +80,7 @@ TEST (test_suite, init_col_maj)
 
 TEST (test_suite, output)
 {
-    linalg::mat_t mat1(2,2, linalg::stor_fmt::col_maj);
+    linalg::mat_t mat1(2,2, linalg::stor_fmt_t::col_maj);
     mat1(0,1) = 1.0;
     std::ostringstream output;
     output << mat1;
@@ -122,7 +122,7 @@ TEST (test_suite, mult_test)
     mat1(0,0) = mat1(0,1) = mat2(0,0) = mat2(1,0) = 1.0;
     linalg::mat_t mat3 = mat1 * mat2;
     EXPECT_EQ(mat3(0,0), 2.0);
-    linalg::mat_t mat5(linalg::stor_fmt::col_maj);
+    linalg::mat_t mat5(linalg::stor_fmt_t::col_maj);
     mat5 = mat1 * mat2;
     EXPECT_EQ(mat5(0,0), 2.0);
     EXPECT_DEATH({
