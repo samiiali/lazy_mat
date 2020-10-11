@@ -31,14 +31,8 @@ public:
 
     mat_t (int nrow, int ncol, stor_fmt_t fmt = stor_fmt_t::row_maj);
 
-    mat_t (const mat_t& rhs) = default;
-
-    mat_t& operator= (const mat_t& rhs) = default;
-
-    mat_t& operator= (mat_t&& rhs); // required for move to self
-
     template <typename lhs_t, typename rhs_t>
-    mat_t (const opr_res_t<lhs_t, rhs_t>& op);
+    mat_t (const opr_res_t<lhs_t, rhs_t>& op); // implicit conversion 
 
     template <typename lhs_t, typename rhs_t>
     mat_t& operator= (const opr_res_t<lhs_t, rhs_t>& op);

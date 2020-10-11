@@ -22,16 +22,6 @@ mat_t::mat_t (int nrow, int ncol, stor_fmt_t fmt)
 
 // ----------------------------------------------------------------------------
 
-mat_t& mat_t::operator= (mat_t&& rhs)
-{
-    if (&rhs == this)
-        return *this;
-    _stor = std::move(rhs._stor);
-    return *this;
-}
-
-// ----------------------------------------------------------------------------
-
 double& mat_t::operator() (int row, int col)
 {
     assert (0 <= row && 0 <= col);

@@ -12,13 +12,18 @@ int main (int argc, char* argv[])
 
 TEST (test_suite, storage_test)
 {
-    linalg::stor_t stor1(linalg::stor_fmt_t::row_maj);
+    linalg::stor_t stor0;
+    stor0.resize({4,3,5});
+    ASSERT_EQ(stor0.index({2,1,3}), 38);
+    linalg::stor_t stor1;
+    stor1.set_perm({2,1,0});
     stor1.resize({4,3,5});
     ASSERT_EQ(stor1.index({2,1,3}), 38);
     ASSERT_EQ(stor1.index({0,0,0}), 0);
     ASSERT_EQ(stor1.index({3,2,4}), 4*3*5-1);
     ASSERT_DEATH(stor1.index({3,3,4}), ".*");
-    linalg::stor_t stor2(linalg::stor_fmt_t::col_maj);
+    linalg::stor_t stor2;
+    stor2.set_perm({0,1,2});
     stor2.resize({4,3,5});
     ASSERT_EQ(stor2.index({2,1,3}), 42);
     ASSERT_EQ(stor1.index({0,0,0}), 0);
@@ -91,24 +96,18 @@ TEST (test_suite, diag_test)
 {
     linalg::mat_t mat1(3,3);
     mat1(0,0) = 1.0;
-
     linalg::mat_t mat2(3,3), mat3(3,3), mat4(3,3);
-
     mat2(0,0) = 2.0;
     mat3(0,0) = 3.0;
     mat4(0,0) = 4.0;
-
     linalg::mat_t mat5 = (mat1 + mat2) + (mat3 + mat4);
     EXPECT_EQ(mat5(0,0), 10.0);
-
     linalg::mat_t mat6(3,3);
     mat6 = mat5;
     mat6 = mat2 + mat3;
     EXPECT_EQ(mat6(0,0), 5.0);
-
     mat6 = mat2 + (mat3 + mat4);
     EXPECT_EQ(mat6(0,0), 9.0);
-
     mat6 = (mat3 + mat4) + mat2;
     EXPECT_EQ(mat6(0,0), 9.0);
 }

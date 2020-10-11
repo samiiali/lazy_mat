@@ -5,6 +5,7 @@
 #include <cstddef>
 #include <vector>
 #include <initializer_list>
+#include <map>
 
 
 namespace linalg
@@ -25,7 +26,7 @@ enum class stor_fmt_t
 class stor_t
 {
 public:
-    stor_t (const stor_fmt_t fmt);
+    void set_perm (const std::initializer_list<size_t>& perm);
 
     void resize (const std::initializer_list<size_t>& dim);
 
@@ -37,8 +38,11 @@ public:
 
     void assign (const double val);
 
-    stor_fmt_t _fmt;
     std::vector<size_t> _dim;
+    // we store a permutation for storing data, e.g. which dimension
+    // is stored first ...
+    std::vector<size_t> _perm;
+    std::vector<size_t> _perm_dim;
     std::vector<double> _data;
 };
 
@@ -48,6 +52,12 @@ class mat_stor_t
 {
 public:
     mat_stor_t (stor_fmt_t fmt);
+
+    mat_stor_t (const mat_stor_t& rhs) = default;
+
+    mat_stor_t& operator= (const mat_stor_t& rhs) = default;
+
+    mat_stor_t& operator= (mat_stor_t&& rhs); // putting this for move to self
 
     double& operator() (size_t i, size_t j) { return _stor({i, j}); }
 
@@ -67,8 +77,11 @@ public:
 
     void resize (const size_t nrow, const size_t ncol);
 
-    stor_fmt_t fmt () const { return _stor._fmt; }
+    stor_fmt_t fmt () const { return _fmt; }
 
+    std::initializer_list<size_t> fmt_init_list (const stor_fmt_t fmt);
+
+    stor_fmt_t _fmt;
     stor_t _stor;
 };
 
