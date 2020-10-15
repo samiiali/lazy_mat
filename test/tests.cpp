@@ -1,7 +1,7 @@
 #include <iostream>
 #include <gtest/gtest.h>
-#include "stor.hpp"
-#include "matrix.hpp"
+#include "mat.hpp" // this includes stor.hpp as well ...
+#include "vec.hpp"
 
 int main (int argc, char* argv[])
 {
@@ -45,7 +45,7 @@ TEST (test_suite, empty_ctor)
     output << mat2;
     EXPECT_EQ(output.str(), "\n");
     mat2 = mat1;
-    linalg::mat_t mat3(linalg::stor_fmt_t::col_maj);
+    linalg::mat_t mat3;
     mat3 = std::move(mat1);
     ASSERT_EQ(mat3.data_at(1), 1.2);
 }
@@ -73,19 +73,18 @@ TEST (test_suite, assign_failure)
     EXPECT_EQ(mat2(0,1), 1.0);
 }
 
-TEST (test_suite, init_col_maj)
+TEST (test_suite, move_with_different_dim)
 {
-    linalg::mat_t mat1(2,2, linalg::stor_fmt_t::col_maj);
-    mat1(0,1) = 1.0;
-    EXPECT_EQ(mat1.data_at(2), 1.0);
+    linalg::mat_t mat1(2,2);
+    mat1(0,1) = 1.2;
     linalg::mat_t mat2(1,2);
     mat2 = std::move(mat1);
-    EXPECT_EQ(mat2.data_at(2), 1.0);
+    EXPECT_EQ(mat2.data_at(1), 1.2);
 }
 
 TEST (test_suite, output)
 {
-    linalg::mat_t mat1(2,2, linalg::stor_fmt_t::col_maj);
+    linalg::mat_t mat1(2,2);
     mat1(0,1) = 1.0;
     std::ostringstream output;
     output << mat1;
@@ -121,7 +120,7 @@ TEST (test_suite, mult_test)
     mat1(0,0) = mat1(0,1) = mat2(0,0) = mat2(1,0) = 1.0;
     linalg::mat_t mat3 = mat1 * mat2;
     EXPECT_EQ(mat3(0,0), 2.0);
-    linalg::mat_t mat5(linalg::stor_fmt_t::col_maj);
+    linalg::mat_t mat5;
     mat5 = mat1 * mat2;
     EXPECT_EQ(mat5(0,0), 2.0);
     EXPECT_DEATH({
@@ -141,4 +140,10 @@ TEST (test_suite, sub_test)
     linalg::mat_t mat3 = mat1 - mat2;
     EXPECT_EQ(mat3(0,0), 1.0);
     EXPECT_EQ(mat3(1,0), -1.0);
+}
+
+TEST (test_suite, vec_test)
+{
+    linalg::vec_t vec1(5);
+    std::cout << vec1 << "\n";
 }

@@ -51,7 +51,7 @@ public:
 class mat_stor_t
 {
 public:
-    mat_stor_t (stor_fmt_t fmt);
+    mat_stor_t (stor_fmt_t fmt = stor_fmt_t::row_maj);
 
     mat_stor_t (const mat_stor_t& rhs) = default;
 
@@ -71,7 +71,9 @@ public:
 
     const std::vector<double>& data () const { return _stor._data; }
 
-    double data_at (const size_t idx) const {return _stor._data[idx]; }
+    double data_at (const size_t idx) const { return _stor._data[idx]; }
+
+    double& data_at (const size_t idx) { return _stor._data[idx]; }
 
     void assign (const double val) { _stor.assign(val); }
 

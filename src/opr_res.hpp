@@ -3,6 +3,7 @@
 
 
 #include <cstddef> // for size_t
+#include "stor.hpp"
 
 
 namespace linalg
@@ -99,6 +100,9 @@ double opr_res_t<lhs_t, rhs_t>::operator() (size_t i, size_t j) const
 
 
 }
+
+
+#include "mat_ops.tpp"
 
 
 #endif // opr_res_HPP

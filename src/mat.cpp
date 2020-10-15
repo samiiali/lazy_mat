@@ -1,4 +1,4 @@
-#include "matrix.hpp"
+#include "mat.hpp"
 #include "stor.hpp"
 
 namespace linalg
@@ -6,15 +6,15 @@ namespace linalg
 
 // ----------------------------------------------------------------------------
 
-mat_t::mat_t (stor_fmt_t fmt)
-:   _stor(fmt)
+mat_t::mat_t ()
+:   _stor(stor_fmt_t::row_maj)
 {
 }
 
 // ----------------------------------------------------------------------------
 
-mat_t::mat_t (int nrow, int ncol, stor_fmt_t fmt)
-:   _stor(fmt)
+mat_t::mat_t (int nrow, int ncol)
+:   _stor(stor_fmt_t::row_maj)
 {
     assert(0 < nrow && 0 < ncol);
     _stor.resize(size_t(nrow), size_t(ncol));
@@ -69,33 +69,6 @@ std::ostream& operator<< (std::ostream& os, const mat_t& mat)
         os << "\n";
     }
     return os;
-}
-
-// ----------------------------------------------------------------------------
-
-opr_res_t<oprand_t, oprand_t> operator+ (
-    const oprand_t& l_oprand, const oprand_t& r_oprand
-) {
-    return opr_res_t<oprand_t, oprand_t>(
-        l_oprand, r_oprand, mat_op_name::add);
-}
-
-// ----------------------------------------------------------------------------
-
-opr_res_t<oprand_t, oprand_t> operator- (
-    const oprand_t& l_oprand, const oprand_t& r_oprand
-) {
-    return opr_res_t<oprand_t, oprand_t>(
-        l_oprand, r_oprand, mat_op_name::sub);
-}
-
-// ----------------------------------------------------------------------------
-
-opr_res_t<oprand_t, oprand_t> operator* (
-    const oprand_t& l_oprand, const oprand_t& r_oprand
-) {
-    return opr_res_t<oprand_t, oprand_t>(
-        l_oprand, r_oprand, mat_op_name::mult);
 }
 
 

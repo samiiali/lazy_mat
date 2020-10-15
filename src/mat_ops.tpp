@@ -2,13 +2,12 @@
 #define MAT_OPS_HPP
 
 
-#include "opr_res.hpp"
+#include "oprand.hpp"  // needed for implicit conversion of mat to oprand ...
 
 
 namespace linalg
 {
 
-class oprand_t;
 
 // ----------------------------------------------------------------------------
 

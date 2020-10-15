@@ -1,13 +1,17 @@
 target_sources(lazy_mat
     PRIVATE
         main.cpp
-        matrix.cpp matrix.hpp
+        mat.cpp mat.hpp
         stor.hpp stor.cpp
-        mat_ops.hpp opr_res.hpp
+        oprand.cpp oprand.hpp
+        mat_ops.tpp opr_res.hpp
+        vec.hpp vec.cpp
 )
 target_sources(tests
     PRIVATE
-        matrix.cpp matrix.hpp
+        mat.cpp mat.hpp
         stor.hpp stor.cpp
-        mat_ops.hpp opr_res.hpp
+        oprand.cpp oprand.hpp
+        mat_ops.tpp opr_res.hpp
+        vec.hpp vec.cpp
 )
